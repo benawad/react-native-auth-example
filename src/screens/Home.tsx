@@ -1,9 +1,14 @@
-import React from "react";
-import { Text, View } from "react-native";
+import React, { useContext } from "react";
+import { Text, View, AsyncStorage } from "react-native";
+import { UserContext } from "../UserContext";
+import { Button } from "react-native-paper";
+import { NavigationStackScreenProps } from "react-navigation-stack";
 
 interface Props {}
 
-export const Home: React.FC<Props> = () => {
+export const Home: React.FC<NavigationStackScreenProps> = ({ navigation }) => {
+  const { authPayload, logout } = useContext(UserContext);
+
   return (
     <View
       style={{
@@ -12,7 +17,7 @@ export const Home: React.FC<Props> = () => {
         justifyContent: "center"
       }}
     >
-      <Text>home</Text>
+      <Text>{authPayload && JSON.stringify(authPayload.user)}</Text>
     </View>
   );
 };
