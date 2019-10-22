@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, AsyncStorage } from "react-native";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
@@ -9,6 +9,7 @@ import { Register } from "./screens/Register";
 import { AuthLoading } from "./screens/AuthLoading";
 import { UserContext, AuthPayload } from "./UserContext";
 import { ASYNCSTORAGE_JWT } from "./constants";
+import decode from "jwt-decode";
 
 const AppStack = createStackNavigator({ Home });
 const AuthStack = createSwitchNavigator(
@@ -57,6 +58,23 @@ function getPersistenceFunctions() {
 
 export const Routes: React.FC<Props> = () => {
   const [authPayload, setAuthPayload] = useState<AuthPayload | null>(null);
+
+  useEffect(() => {
+    if (__DEV__) {
+      AsyncStorage.getItem(ASYNCSTORAGE_JWT).then(token => {
+        try {
+          const { id, username } = decode(token);
+          setAuthPayload({
+            token,
+            user: {
+              id,
+              username
+            }
+          });
+        } catch {}
+      });
+    }
+  }, []);
 
   return (
     <PaperProvider>
