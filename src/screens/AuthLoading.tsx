@@ -1,8 +1,9 @@
 import React, { useEffect, useContext } from "react";
-import { View, Text, Button, AsyncStorage } from "react-native";
+import { View, Text, Button } from "react-native";
+import SecureStore from "expo-secure-store";
 import { NavigationSwitchScreenProps } from "react-navigation";
 import { ActivityIndicator } from "react-native-paper";
-import { ASYNCSTORAGE_JWT } from "../constants";
+import { SECURESTORAGE_JWT } from "../constants";
 import { UserContext } from "../UserContext";
 import decode from "jwt-decode";
 
@@ -14,7 +15,7 @@ export const AuthLoading: React.FC<Props & NavigationSwitchScreenProps> = ({
   const { setAuthPayload } = useContext(UserContext);
 
   useEffect(() => {
-    AsyncStorage.getItem(ASYNCSTORAGE_JWT)
+    SecureStore.getItemAsync(SECURESTORAGE_JWT)
       .then(token => {
         try {
           const { id, username } = decode(token);

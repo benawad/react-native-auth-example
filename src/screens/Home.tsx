@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
-import { Text, View, AsyncStorage, SafeAreaView, FlatList } from "react-native";
+import { Text, View, SafeAreaView, FlatList } from "react-native";
+import SecureStore from "expo-secure-store";
 import { UserContext } from "../UserContext";
 import { Button } from "react-native-paper";
 import { NavigationStackScreenProps } from "react-navigation-stack";
