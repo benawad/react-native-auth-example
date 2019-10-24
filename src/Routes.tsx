@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, AsyncStorage } from "react-native";
+import { View, Text } from "react-native";
+import SecureStore from "expo-secure-store";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 import { Provider as PaperProvider } from "react-native-paper";
@@ -8,7 +9,7 @@ import { Login } from "./screens/Login";
 import { Register } from "./screens/Register";
 import { AuthLoading } from "./screens/AuthLoading";
 import { UserContext, AuthPayload } from "./UserContext";
-import { ASYNCSTORAGE_JWT } from "./constants";
+import { SECURESTORAGE_JWT } from "./constants";
 import decode from "jwt-decode";
 
 const AppStack = createStackNavigator({ Home });
@@ -37,13 +38,13 @@ interface Props {}
 const persistenceKey = "persistenceKey1";
 const persistNavigationState = async navState => {
   try {
-    await AsyncStorage.setItem(persistenceKey, JSON.stringify(navState));
+    await SecureStore.setItemAsync(persistenceKey, JSON.stringify(navState));
   } catch (err) {
     // handle the error according to your needs
   }
 };
 const loadNavigationState = async () => {
-  const jsonString = await AsyncStorage.getItem(persistenceKey);
+  const jsonString = await SecureStore.getItemAsync(persistenceKey);
   return JSON.parse(jsonString);
 };
 
@@ -61,7 +62,7 @@ export const Routes: React.FC<Props> = () => {
 
   useEffect(() => {
     if (__DEV__) {
-      AsyncStorage.getItem(ASYNCSTORAGE_JWT).then(token => {
+      SecureStore.getItemAsync(SECURESTORAGE_JWT).then(token => {
         try {
           const { id, username } = decode(token);
           setAuthPayload({
@@ -82,11 +83,11 @@ export const Routes: React.FC<Props> = () => {
         value={{
           authPayload,
           setAuthPayload: (payload: AuthPayload) => {
-            AsyncStorage.setItem(ASYNCSTORAGE_JWT, payload.token);
+            SecureStore.setItemAsync(SECURESTORAGE_JWT, payload.token);
             setAuthPayload(payload);
           },
-          logout: () => {
-            AsyncStorage.clear();
+          logout: async () => {
+            await SecureStore.deleteItemAsync(SECURESTORAGE_JWT);
             setAuthPayload(null);
           }
         }}
